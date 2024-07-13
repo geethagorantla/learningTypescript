@@ -1,24 +1,62 @@
-import React from 'react';
-import logo from './logo.svg';
+import React, { useState } from 'react';
 import './App.css';
+import { Todo } from './types';
+import TodoList from './todo/TodoList';
 
-function App() {
+
+const App:React.FC= ()=> {
+  const[todos,setTodos]=useState<Todo[]>([])
+  console.log(todos,"todos")
+  // const[todoItem,setTodoItem]=useState({title:"",completed:false} as Todo)
+  const [todoItem, setTodoItem] = useState<{ title: string, completed: boolean }>({
+    title: '',
+    completed: false
+});
+
+console.log(todoItem,"todoItem")
+
+
+
+  const editTodo=(id:number,title:String)=>{
+   const updatedTodos =todos?.map((item)=>{
+    return item.id === id ? {...item,title:title} : item
+   })
+  //  setTodos(updatedTodos)
+    
+  }
+
+  const addTodo=()=>{
+    const newTodo:Todo={
+        id:Date.now(),
+        title:todoItem?.title,
+        completed:todoItem?.completed
+    }
+
+    setTodos(prevTodos=>[...prevTodos,newTodo])
+    setTodoItem({title:"",completed:false})
+
+  }
+
+  const deleteTodo=()=>{
+
+  }
+
+  const handleInputChange=(e:React.ChangeEvent<HTMLInputElement>)=>{
+ 
+    const {name, value, type, checked}=e.target
+    const val = type === 'checkbox' ? checked : value;
+      setTodoItem(prevState=>({...prevState,[name]: val}))
+    
+  }
+  
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+    <div>
+      <h1>TODO list</h1>
+      <input type="text" value={todoItem?.title} name="title" onChange={handleInputChange} />
+      <input type="checkbox"  checked={todoItem?.completed || false} name="completed" onChange={handleInputChange}/>    
+      <button onClick={addTodo}>AddTODO</button>
+      
+      <TodoList todos={todos} editTodo={editTodo} deleteTodo={deleteTodo} />
     </div>
   );
 }
